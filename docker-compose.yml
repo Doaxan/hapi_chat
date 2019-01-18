@@ -1,0 +1,15 @@
+version: '2'
+services:
+  chat:
+    build: .
+    ports:
+     - "8080:8080"
+    depends_on:
+     - db
+    environment:
+     - DATABASE_HOST=db
+  db:
+    command: --default-authentication-plugin=mysql_native_password
+    build: ./db-docker
+    expose:
+     - "3306"

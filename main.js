@@ -1,4 +1,6 @@
-const app = require('express')();
+const Hapi = require('hapi');
+
+// const app = require('express')();
 const http = require('http').Server(app);
 const bodyParser = require('body-parser');
 const Sequelize = require('sequelize');
@@ -11,7 +13,8 @@ const cookie = require('cookie');
 const jwtSecret = 'secret';
 
 // connection uri
-const sequelize = new Sequelize('mysql://admin:pass@localhost/brave_chat');
+const host = process.env.DATABASE_HOST;
+const sequelize = new Sequelize(`mysql://admin:pass@${host}/brave_chat`);
 
 // test db connection
 sequelize
@@ -57,16 +60,32 @@ const Message = sequelize.define('message', {
     timestamps: false
 });
 
-app.use(bodyParser.urlencoded({
-    extended: false
-}));
-app.use(bodyParser.json());
-app.use(cookieParser());
+// app.use(bodyParser.urlencoded({
+//     extended: false
+// }));
+// app.use(bodyParser.json());
+// app.use(cookieParser());
+
+const server = Hapi.server({
+    port: 8080,
+    host: 'localhost'
+});
 
 // routes
-app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/auth.html');
+server.route({
+    method: 'GET',
+    path: '/',
+    handler: (request, h) => {
+
+        return 'Hello, world!';
+    }
 });
+
+// app.get('/', function (req, res) {
+//     res.sendFile(__dirname + '/auth.html');
+// });
+
+
 
 app.post('/auth', function (req, res, next) {
     // if (req.body.username && req.body.username === 'user' && req.body.password && req.body.password === 'pass') {
